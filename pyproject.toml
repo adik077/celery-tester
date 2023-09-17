@@ -4,10 +4,11 @@ version = "0.1.0"
 description = ""
 authors = ["Adrian Ginalski <adrian.ginalski@comarch.com>"]
 readme = "README.md"
-packages = [{include = "celery_tester"}]
 
 [tool.poetry.dependencies]
 python = "^3.9"
+flask = "^2.3.3"
+pymongo = "^4.5.0"
 
 
 [build-system]
