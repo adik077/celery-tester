@@ -25,6 +25,16 @@ services:
     networks:
       - net
 
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - "6379:6379"
+    expose:
+      - "6379"
+    networks:
+      - net
+
   celery-tester:
     container_name: celery-tester
     build: .
@@ -33,10 +43,23 @@ services:
     environment:
       - MONGODB_USERNAME=root
       - MONGODB_PASSWORD=root
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
     depends_on:
       - mongodb
-    links:
-      - mongodb:mongodb
+      - redis
+    networks:
+      - net
+
+  worker:
+    build: .
+    command: celery --app app.celery worker --loglevel=info
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    depends_on:
+      - celery-tester
+      - redis
     networks:
       - net
 
